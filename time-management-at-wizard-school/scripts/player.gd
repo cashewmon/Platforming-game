@@ -15,8 +15,6 @@ var facing_right = false
 @onready var right_raycast: RayCast2D = $RightRaycast
 @onready var up_raycast: RayCast2D = $UpRaycast
 @onready var down_raycast: RayCast2D = $DownRaycast
-@onready var player: CharacterBody2D = $"."
-
 
 
 var current_speed = speed
@@ -62,9 +60,9 @@ func _physics_process(delta: float) -> void:
 		ledge_grab=true
 		if not is_on_wall():
 			if facing_right:
-				player.position.x+=1
+				position.x+=1
 			else:
-				player.position.y=-1
+				position.x-=1
 		
 		# Lets the player jump and drop out of a ledge grab
 		#needs editing
