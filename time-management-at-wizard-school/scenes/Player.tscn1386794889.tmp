@@ -154,4 +154,4 @@ target_position = Vector2(4, 3)
 script = ExtResource("4_qu4a1")
 
 [node name="LedgeJumpTimer" type="Timer" parent="."]
-wait_time = 0.5
+autostart = true

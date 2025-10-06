@@ -8,6 +8,7 @@ var grounded = .05
 var ledge = 0
 var ledge_grab=false
 var ledge_drop=false
+var first_grab=false
 # facing false = left, true = right
 var facing_right = false
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
@@ -15,6 +16,7 @@ var facing_right = false
 @onready var right_raycast: RayCast2D = $RightRaycast
 @onready var up_raycast: RayCast2D = $UpRaycast
 @onready var down_raycast: RayCast2D = $DownRaycast
+@onready var ledge_jump_timer: Timer = $LedgeJumpTimer
 
 
 var current_speed = speed
@@ -27,6 +29,8 @@ func _physics_process(delta: float) -> void:
 	# 	
 	if is_on_floor():
 		grounded = .05
+		first_grab=false
+		ledge_jump_timer.stop()
 	
 	# Take two on walking vs running
 	if Input.is_action_pressed("Shift") and is_on_floor():
@@ -69,6 +73,7 @@ func _physics_process(delta: float) -> void:
 	if ledge_grab == true:
 		velocity.y=0
 		
+		
 		if Input.is_action_pressed("ui_down") and Input.is_action_pressed("ui_accept"):
 			ledge_grab=false
 			velocity += get_gravity() * delta
@@ -84,11 +89,17 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		ledge_drop=false
 	
-	
+	if ledge_grab and not first_grab:
+		first_grab=true
+		ledge_jump_timer.start()
+
+	print(ledge_jump_timer.time_left)
 	# Handles jump
-	if Input.is_action_just_pressed("ui_accept") and grounded>0 and not ledge_grab and ledge_grab==false:
+	if Input.is_action_just_pressed("ui_accept") and grounded>0 and not ledge_grab and (ledge_jump_timer.time_left==0 or ledge_jump_timer.time_left==.5):
 		velocity.y = JUMP_VELOCITY
 		print(ledge)
+		ledge_jump_timer.stop()
+		first_grab=false
 		# Trying to get the shifting jump to be slightly faster than shifting speed
 		if current_speed==shift_speed:
 			current_speed=80
